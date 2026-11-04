@@ -1,0 +1,74 @@
+# Copy the big downloads into THIS fork's own "assets" release, so a new install never depends on the original project
+# or on Hugging Face: the Kokoro voice, the HDRIs and textures, the sampled instruments (from the original's "assets"
+# release), and the Whisper speech-to-text models (from Hugging Face, packed like the others).
+# Then tools/assets.json is pointed at this fork, so tools/fetch.sh downloads from here.
+# Run it by hand (Actions → Mirror assets → Run workflow) after the original publishes new packs.
+name: Mirror assets
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      UPSTREAM: lemomo-ai/lemo-opuscar
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Make sure the release exists
+        run: |
+          gh release view assets >/dev/null 2>&1 || gh release create assets --title "Assets (mirror)" --notes "Large downloads used by tools/fetch.sh: copies of the original project's packs plus Whisper models. Filled by the Mirror assets workflow."
+
+      - name: Copy the original's packs
+        run: |
+          have=$(gh release view assets --json assets -q '.assets[].name')
+          for name in $(jq -r '.packs[].file' tools/assets.json); do
+            if echo "$have" | grep -qx "$name"; then echo "already here: $name"; continue; fi
+            want=$(jq -r --arg f "$name" '.packs[] | select(.file == $f) | .sha256' tools/assets.json)
+            gh release download assets -R "$UPSTREAM" -p "$name" -D /tmp/a --clobber
+            got=$(sha256sum "/tmp/a/$name" | cut -d' ' -f1)
+            [ "$got" = "$want" ] || { echo "checksum mismatch for $name"; exit 1; }
+            gh release upload assets "/tmp/a/$name"
+            rm -f "/tmp/a/$name"; echo "copied: $name"
+          done
+
+      - name: Pack and upload the Whisper models
+        run: |
+          pip install --quiet huggingface_hub
+          have=$(gh release view assets --json assets -q '.assets[].name')
+          : > /tmp/whisper.tsv
+          for m in base.en small.en medium.en; do
+            f="whisper-$m.tar"
+            if ! echo "$have" | grep -qx "$f"; then
+              python -c "from huggingface_hub import snapshot_download as s; s('Systran/faster-whisper-$m', local_dir='core/tts/whisper/$m')"
+              rm -rf "core/tts/whisper/$m/.cache"
+              tar -cf "/tmp/$f" "core/tts/whisper/$m"
+              gh release upload assets "/tmp/$f"
+            else
+              gh release download assets -p "$f" -D /tmp --clobber
+            fi
+            printf '%s\t%s\t%s\t%s\n' "$m" "$f" "$(stat -c %s "/tmp/$f")" "$(sha256sum "/tmp/$f" | cut -d' ' -f1)" >> /tmp/whisper.tsv
+            rm -rf "/tmp/$f" "core/tts/whisper/$m"
+          done
+
+      - name: Point tools/assets.json at this fork
+        run: |
+          python - <<'PY'
+          import json, os
+          p = 'tools/assets.json'; m = json.load(open(p))
+          m['repo'] = os.environ['GITHUB_REPOSITORY']
+          for line in open('/tmp/whisper.tsv'):
+              name, f, size, sha = line.split()
+              m['packs']['whisper-' + name] = {'file': f, 'size': int(size), 'sha256': sha}
+          json.dump(m, open(p, 'w'), indent=1); open(p, 'a').write('\n')
+          PY
+          git config user.name "mirror-assets"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tools/assets.json
+          git diff --cached --quiet || { git commit -q -m "Download assets from this fork's own release"; git push -q; }
+          cat tools/assets.json
