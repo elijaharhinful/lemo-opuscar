@@ -1,5 +1,5 @@
 {
- "repo": "lemomo-ai/lemo-opuscar",
+ "repo": "elijaharhinful/lemo-opuscar",
  "tag": "assets",
  "packs": {
   "voice": {
@@ -36,6 +36,21 @@
    "file": "instruments-vsco2ce.tar",
    "size": 413911040,
    "sha256": "231297103cb4a3123707ddb7b284e5ea3aed0b8d77c0b891360b4d3efe8b586f"
+  },
+  "whisper-base.en": {
+   "file": "whisper-base.en.tar",
+   "size": 147783680,
+   "sha256": "3cbd3e4eef9751384f33b22504f5a68b1dd28952547085db81b28f6514ad2151"
+  },
+  "whisper-small.en": {
+   "file": "whisper-small.en.tar",
+   "size": 486113280,
+   "sha256": "4b4717b3e29495d05821efbfba4fc65e2dd04d97d920387d8750e3b8d979da99"
+  },
+  "whisper-medium.en": {
+   "file": "whisper-medium.en.tar",
+   "size": 1530470400,
+   "sha256": "0d2a35bab1c104ca855520150f3e29cab2b0ad2c923c2495c816e0e111166e0a"
   }
  }
 }
