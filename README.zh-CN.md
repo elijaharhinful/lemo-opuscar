@@ -387,7 +387,7 @@ claude plugin uninstall lemo-opuscar@lemolab
 - **样片视频及其静帧**（`styles/`、画廊页和 Releases 中的）：[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.zh-hans)。可以转载、改编和商用，须署名 **LemoLab** 并附本仓库链接，改动过的须注明。
 - **你用本库做出的片子**：归你自己，无须署名。
 - **样片中的第三方素材**：沿用各自的授权，见各样片的 `CREDITS`。
-- **有三段配音不在 CC BY 4.0 范围内**：综艺节奏扁平（Game Show Flat）里的喊声（macOS 系统语音 `say`）、纸雕灯影（Paper-cut Lightbox）的旁白（微软 Edge TTS，计划用 Kokoro 重配），以及电视新闻包装（Broadcast News Package）的旁白（豆包 TTS，受火山引擎条款约束）。它们不适用上面的授权。请不要复用；你自己的片子请用 Kokoro（默认）或你有权使用的声音。
+- **有六段配音不在 CC BY 4.0 范围内**：黑板粉笔（Chalkboard）、电路板（Circuit Board）、桌面穿梭（Desktop Flythrough）、等距绘本（Isometric Picture Book）、印刷长镜头（Printed Long Take）的旁白（微软 Edge TTS，在线服务），以及电视新闻包装（Broadcast News Package）的旁白（豆包 TTS，受火山引擎条款约束）。它们不适用上面的授权。请不要复用；你自己的片子请用 Kokoro（默认）或你有权使用的声音。
 
 你在自己片子里使用的素材由你负责。
 
@@ -403,7 +403,8 @@ claude plugin uninstall lemo-opuscar@lemolab
 
 ⭐ **点个星**<br>
 👀 **Watch → Custom → Releases**，有新版本会通知你<br>
-𝕏 关注 [@lemomo_ai](https://x.com/lemomo_ai)
+𝕏 关注 [@lemomo_ai](https://x.com/lemomo_ai)<br>
+✉️ 商业合作：[lemomo.studio@gmail.com](mailto:lemomo.studio@gmail.com)
 
 <sub>LemoLab · by Lemomo</sub>
 
